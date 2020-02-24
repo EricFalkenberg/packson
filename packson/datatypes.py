@@ -17,14 +17,14 @@ def packson_object(cls):
         __json_data = {}
 
         def __init__(self, *args):
-            super(PacksonData, self).__setattr__('data', cls(*args))
+            self.__wrapper = cls(*args)
             for attr in WRAPPER_ASSIGNMENTS:
                 if attr != '__annotations__':
-                    setattr(self, attr, getattr(self.data.__class__, attr))
+                    setattr(self, attr, getattr(self.__wrapper.__class__, attr))
             self.__post_init__()
 
         def __post_init__(self):
-            instance_attributes = super(PacksonData, self).__getattribute__('data') \
+            instance_attributes = super(PacksonData, self).__getattribute__('_PacksonData__wrapper') \
                 .__class__ \
                 .__dict__ \
                 .items()
@@ -33,23 +33,22 @@ def packson_object(cls):
                     self.__setattr__(key, val)
 
         def set_packson_field(self, key, val):
-            attribute = self.data.__getattribute__(key)
+            attribute = super(PacksonData, self).__getattribute__(key)
             if attribute.is_complex():
                 val = attribute.type().from_dict(val)
             if not isinstance(val, attribute.type()):
-                raise TypeError(f'{key} input {val} does not match field type {attribute.type()}')
+                raise TypeError(f'value provided for {key} does not match field type {attribute.type()}')
             attribute.set_value(val)
             self.__setattr__(key, attribute)
 
         def __setattr__(self, key, value):
-            data = super(PacksonData, self).__getattribute__('data')
-            if key in WRAPPER_ASSIGNMENTS:
+            if key in WRAPPER_ASSIGNMENTS or key == '_PacksonData__wrapper':
                 pass
             elif value.is_complex() and not value.is_none():
                 self.__json_data[key] = value.value().to_dict()
             else:
                 self.__json_data[key] = value.value()
-            setattr(data, key, value)
+            super(PacksonData, self).__setattr__(key, value)
 
         def to_json(self):
             return json.dumps(self.to_dict())
@@ -70,7 +69,7 @@ def packson_object(cls):
             return o
 
         def __repr__(self):
-            return repr(self.data)
+            return repr(self.__wrapper)
 
     return PacksonData
 
