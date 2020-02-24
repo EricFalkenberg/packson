@@ -5,6 +5,7 @@ An alternative to Jackson Databind for Python 3
 
 ### Usage
 ```python
+from packson.datatypes import packson_object, PacksonField
 
 @packson_object
 class AJsonRequest(object):
