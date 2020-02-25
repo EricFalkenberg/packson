@@ -36,6 +36,7 @@ obj = AComplexPacksonObject.from_json(
         }
     )
 )
-print(obj.field1)
-print(obj.field3.field1)
+print(obj.field1)        # prints 3
+print(obj.field2)        # prints 'hello'
+print(obj.field3.field1) # prints 4
 ```
