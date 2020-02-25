@@ -15,7 +15,7 @@ from packson.datatypes import packson_object, PacksonField
 
 @packson_object
 class AnotherPacksonObject(object):
-    field1 = PacksonField(attribute_type=int)
+    field1 = PacksonField(type=int)
 
 @packson_object
 class AJsonRequest(object):
