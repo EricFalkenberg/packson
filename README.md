@@ -3,6 +3,11 @@
 
 An alternative to Jackson Databind for Python 3
 
+### Installation
+```
+pip install packson
+```
+
 ### Usage
 ```python
 import json
