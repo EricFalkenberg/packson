@@ -14,9 +14,9 @@ class AnotherPacksonObject(object):
 
 @packson_object
 class AJsonRequest(object):
-    field1 = PacksonField(attribute_type=int)
-    field2 = PacksonField(attribute_type=str)
-    field3 = PacksonField(attribute_type=AnotherPacksonObject)
+    field1 = PacksonField(type=int)
+    field2 = PacksonField(type=str)
+    field3 = PacksonField(type=AnotherPacksonObject)
 
 
 # automatically bind json to packson objects

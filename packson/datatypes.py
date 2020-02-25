@@ -35,9 +35,9 @@ def packson_object(cls):
         def set_packson_field(self, key, val):
             attribute = super(PacksonData, self).__getattribute__(key)
             if attribute.is_complex():
-                val = attribute.type().from_dict(val)
-            if not isinstance(val, attribute.type()):
-                raise TypeError(f'value provided for {key} does not match field type {attribute.type()}')
+                val = attribute.type.from_dict(val)
+            if not isinstance(val, attribute.type):
+                raise TypeError(f'value provided for {key} does not match field type {attribute.type}')
             attribute.set_value(val)
             self.__setattr__(key, attribute)
 
@@ -45,15 +45,15 @@ def packson_object(cls):
             if key in WRAPPER_ASSIGNMENTS or key == '_PacksonData__wrapper':
                 pass
             elif value.is_complex() and not value.is_none():
-                self.__json_data[key] = value.value().to_dict()
+                self.__json_data[key] = value.value.to_dict()
             else:
-                self.__json_data[key] = value.value()
+                self.__json_data[key] = value.value
             super(PacksonData, self).__setattr__(key, value)
 
         def __getattribute__(self, item):
             attribute = super(PacksonData, self).__getattribute__(item)
             if isinstance(attribute, PacksonField):
-                return attribute.value()
+                return attribute.value
             else:
                 return attribute
 
@@ -83,23 +83,18 @@ def packson_object(cls):
 
 class PacksonField(object):
 
-    def __init__(self, attribute_type=None, default=None):
-        self.attribute_type = attribute_type
-        self.attribute_value = default
+    def __init__(self, type=None, boxed_type=None, default=None):
+        self.type = type
+        self.boxed_type = boxed_type
+        self.value = default
 
-    def type(self):
-        return self.attribute_type
-
-    def value(self):
-        return self.attribute_value
-
-    def set_value(self, attribute_value):
-        self.attribute_value = attribute_value
+    def set_value(self, value):
+        self.value = value
 
     def is_complex(self):
-        return not any([ty == self.type() for ty in PRIMITIVE_TYPES])
+        return not any([ty == self.type for ty in PRIMITIVE_TYPES])
 
     def is_none(self):
-        return self.value() is None
+        return self.value is None
 
 

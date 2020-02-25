@@ -44,21 +44,21 @@ class PacksonObjectTests(unittest.TestCase):
 class PacksonFieldTests(unittest.TestCase):
 
     def test_int_packson_field(self):
-        int_field = PacksonField(attribute_type=int, default=0)
-        self.assertEqual(int_field.value(), 0)
-        self.assertEqual(int_field.type(), int)
+        int_field = PacksonField(type=int, default=0)
+        self.assertEqual(int_field.value, 0)
+        self.assertEqual(int_field.type, int)
         self.assertFalse(int_field.is_complex())
         self.assertFalse(int_field.is_none())
 
 
 @packson_object
 class SimpleObject:
-    a = PacksonField(attribute_type=int)
+    a = PacksonField(type=int)
 
 
 @packson_object
 class ComplexObject:
-    b = PacksonField(attribute_type=SimpleObject)
+    b = PacksonField(type=SimpleObject)
 
 
 if __name__ == '__main__':
