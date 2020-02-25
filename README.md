@@ -31,6 +31,6 @@ obj = AJsonRequest.from_json(
         }
     )
 )
-print(obj.field1.value())
-print(obj.field3.value().field1.value())
+print(obj.field1)
+print(obj.field3.field1)
 ```

@@ -50,6 +50,13 @@ def packson_object(cls):
                 self.__json_data[key] = value.value()
             super(PacksonData, self).__setattr__(key, value)
 
+        def __getattribute__(self, item):
+            attribute = super(PacksonData, self).__getattribute__(item)
+            if isinstance(attribute, PacksonField):
+                return attribute.value()
+            else:
+                return attribute
+
         def to_json(self):
             return json.dumps(self.to_dict())
 

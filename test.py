@@ -14,7 +14,7 @@ class PacksonObjectTests(unittest.TestCase):
             )
         )
         self.assertIsInstance(res, SimpleObject)
-        self.assertEqual(res.a.value(), 3)
+        self.assertEqual(res.a, 3)
 
     def test_complex_object_from_json(self):
         res = ComplexObject.from_json(
@@ -27,8 +27,8 @@ class PacksonObjectTests(unittest.TestCase):
             )
         )
         self.assertIsInstance(res, ComplexObject)
-        self.assertIsInstance(res.b.value(), SimpleObject)
-        self.assertEqual(res.b.value().a.value(), 3)
+        self.assertIsInstance(res.b, SimpleObject)
+        self.assertEqual(res.b.a, 3)
 
     def test_simple_object_from_json_bad_type(self):
         with self.assertRaises(TypeError):
