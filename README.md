@@ -5,17 +5,18 @@ An alternative to Jackson Databind for Python 3
 
 ### Usage
 ```python
+import json
 from packson.datatypes import packson_object, PacksonField
+
+@packson_object
+class AnotherPacksonObject(object):
+    field1 = PacksonField(attribute_type=int)
 
 @packson_object
 class AJsonRequest(object):
     field1 = PacksonField(attribute_type=int)
     field2 = PacksonField(attribute_type=str)
     field3 = PacksonField(attribute_type=AnotherPacksonObject)
-
-@packson_object
-class AnotherPacksonObject(object):
-    field1 = PacksonField(attribute_type=int)
 
 
 # automatically bind json to packson objects
