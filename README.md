@@ -25,7 +25,7 @@ class AComplexPacksonObject(object):
 
 
 # automatically bind json to packson objects
-obj = AJsonRequest.from_json(
+obj = AComplexPacksonObject.from_json(
     json.dumps(
         {
             'field1': 3,
