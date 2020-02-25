@@ -1,6 +1,6 @@
 import unittest
 import json
-from packson.datatypes import PacksonField, packson_object
+from datatypes import PacksonField, packson_object
 
 
 class PacksonObjectTests(unittest.TestCase):
