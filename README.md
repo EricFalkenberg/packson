@@ -48,16 +48,16 @@ obj = AnIterableObject.from_dict(
     {
         'iterable_field': [
             {
-                'a': 1
+                'field1': 1
             },
             {
-                'a': 2
+                'field1': 2
             },
             {
-                'a': 3
+                'field1': 3
             }
         ]   
     }
 )
-print([i.a for i in obj.iterable_field]) # prints [1, 2, 3]
+print([i.field1 for i in obj.iterable_field]) # prints [1, 2, 3]
 ```
