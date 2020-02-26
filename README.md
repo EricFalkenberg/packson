@@ -1,14 +1,17 @@
 
 ## Packson
+Easily bind json and dictionaries to python class instances 
 
-An alternative to Jackson Databind for Python 3
+### Justification 
+Binding json and dictionaries to python class instances allows you to statically define what your data should look
+like and provides a single interface for checking that all information in your data is typed and initialized correctly.
 
 ### Installation
 ```
 pip install packson
 ```
 
-### Usage
+### Examples 
 ```python
 import json
 from packson.datatypes import packson_object, PacksonField
@@ -27,7 +30,7 @@ class AComplexPacksonObject(object):
 class AnIterableObject(object):
     iterable_field = PacksonField(type=list, boxed_type=ASimplePacksonObject)
 
-# automatically bind json to packson objects
+# bind json data to AComplexPacksonObject 
 obj = AComplexPacksonObject.from_json(
     json.dumps(
         {
@@ -43,7 +46,7 @@ print(obj.field1)        # prints 3
 print(obj.field2)        # prints 'hello'
 print(obj.field3.field1) # prints 4
 
-# also works with dictionaries
+# bind dictionary to AnIterableObject 
 obj = AnIterableObject.from_dict(
     {
         'iterable_field': [
@@ -60,4 +63,11 @@ obj = AnIterableObject.from_dict(
     }
 )
 print([i.field1 for i in obj.iterable_field]) # prints [1, 2, 3]
+
+# dump json data from AnIterableObject instance
+print(obj.to_json()) 
+
+# dump dictionary data from AnIterableObject instance
+print(obj.to_dict()) 
 ```
+
