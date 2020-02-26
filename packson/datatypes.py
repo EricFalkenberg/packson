@@ -1,12 +1,23 @@
 import json
 from functools import WRAPPER_ASSIGNMENTS
+import copy
 
 PRIMITIVE_TYPES = [
     dict,
     list,
     str,
     int,
-    float
+    float,
+    bytes,
+    tuple,
+    list,
+    set
+]
+
+ITERABLE_TYPES = [
+    list,
+    tuple,
+    set
 ]
 
 
@@ -33,9 +44,18 @@ def packson_object(cls):
                     self.__setattr__(key, val)
 
         def set_packson_field(self, key, val):
-            attribute = super(PacksonData, self).__getattribute__(key)
+            attribute = copy.deepcopy(super(PacksonData, self).__getattribute__(key))
             if attribute.is_complex():
                 val = attribute.type.from_dict(val)
+            if attribute.is_iterable():
+                new_val = []
+                for element in val:
+                    new_element = PacksonField(type=attribute.boxed_type, default=element)
+                    if new_element.is_complex():
+                        new_val += [new_element.type.from_dict(new_element.value)]
+                    else:
+                        new_val += [new_element]
+                val = new_val
             if not isinstance(val, attribute.type):
                 raise TypeError(f'value provided for {key} does not match field type {attribute.type}')
             attribute.set_value(val)
@@ -93,6 +113,9 @@ class PacksonField(object):
 
     def is_complex(self):
         return not any([ty == self.type for ty in PRIMITIVE_TYPES])
+
+    def is_iterable(self):
+        return any([ty == self.type for ty in ITERABLE_TYPES])
 
     def is_none(self):
         return self.value is None
