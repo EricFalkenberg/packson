@@ -23,6 +23,9 @@ class AComplexPacksonObject(object):
     field2 = PacksonField(type=str)
     field3 = PacksonField(type=ASimplePacksonObject)
 
+@packson_object
+class AnIterableObject(object):
+    iterable_field = PacksonField(type=list, boxed_type=ASimplePacksonObject)
 
 # automatically bind json to packson objects
 obj = AComplexPacksonObject.from_json(
@@ -39,4 +42,22 @@ obj = AComplexPacksonObject.from_json(
 print(obj.field1)        # prints 3
 print(obj.field2)        # prints 'hello'
 print(obj.field3.field1) # prints 4
+
+# also works with dictionaries
+obj = AnIterableObject.from_dict(
+    {
+        'iterable_field': [
+            {
+                'a': 1
+            },
+            {
+                'a': 2
+            },
+            {
+                'a': 3
+            }
+        ]   
+    }
+)
+print([i.a for i in obj.iterable_field]) # prints [1, 2, 3]
 ```
