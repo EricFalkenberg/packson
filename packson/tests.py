@@ -55,6 +55,14 @@ class PacksonObjectTests(unittest.TestCase):
             self.assertIsInstance(element.a, int)
             self.assertEqual(idx+1, element.a)
 
+    def test_simple_iterable_from_dict(self):
+        obj = SimpleIterObject.from_dict(
+            {
+                'iterable': [1, 2, 3]
+            }
+        )
+        self.assertEqual('[1, 2, 3]', str(obj.iterable))
+
     def test_simple_object_from_json_bad_type(self):
         with self.assertRaises(TypeError):
             SimpleObject.from_json(
@@ -80,7 +88,6 @@ class PacksonFieldTests(unittest.TestCase):
 class SimpleObject:
     a = PacksonField(type=int)
 
-
 @packson_object
 class ComplexObject:
     b = PacksonField(type=SimpleObject)
@@ -89,6 +96,10 @@ class ComplexObject:
 @packson_object
 class IterObject:
     iterable = PacksonField(type=list, boxed_type=SimpleObject)
+
+@packson_object
+class SimpleIterObject:
+    iterable = PacksonField(type=list, boxed_type=int)
 
 
 if __name__ == '__main__':

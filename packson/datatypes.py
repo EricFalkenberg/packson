@@ -73,6 +73,8 @@ def packson_object(cls):
         def __getattribute__(self, item):
             attribute = super(PacksonData, self).__getattribute__(item)
             if isinstance(attribute, PacksonField):
+                if attribute.is_iterable():
+                    return [i.value if isinstance(i, PacksonField) else i for i in attribute.value]
                 return attribute.value
             else:
                 return attribute
