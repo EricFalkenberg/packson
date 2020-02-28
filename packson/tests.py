@@ -31,7 +31,7 @@ class PacksonObjectTests(unittest.TestCase):
         self.assertEqual(res.b.a, 3)
 
     def test_iterable_object_from_json(self):
-        res = IterObject.from_json(
+        res = ComplexIterObject.from_json(
             json.dumps(
                 {
                     'iterable': [
@@ -48,7 +48,7 @@ class PacksonObjectTests(unittest.TestCase):
                 }
             )
         )
-        self.assertIsInstance(res, IterObject)
+        self.assertIsInstance(res, ComplexIterObject)
         self.assertIsInstance(res.iterable, list)
         for idx, element in enumerate(res.iterable):
             self.assertIsInstance(element, SimpleObject)
@@ -62,6 +62,31 @@ class PacksonObjectTests(unittest.TestCase):
             }
         )
         self.assertEqual('[1, 2, 3]', str(obj.iterable))
+
+    def test_multiple_complex_object_from_dict(self):
+        obj = MultiFieldComplexObject.from_dict(
+            {
+                'a': {
+                    'a': 1
+                },
+                'b': {
+                    'a': 2
+                },
+                'c': {
+                    'a': 3
+                }
+            }
+        )
+        self.assertIsInstance(obj, MultiFieldComplexObject)
+        self.assertIsInstance(obj.a, SimpleObject)
+        self.assertIsInstance(obj.a.a, int)
+        self.assertEqual(obj.a.a, 1)
+        self.assertIsInstance(obj.b, SimpleObject)
+        self.assertIsInstance(obj.b.a, int)
+        self.assertEqual(obj.b.a, 2)
+        self.assertIsInstance(obj.c, SimpleObject)
+        self.assertIsInstance(obj.c.a, int)
+        self.assertEqual(obj.c.a, 3)
 
     def test_simple_object_from_json_bad_type(self):
         with self.assertRaises(TypeError):
@@ -88,14 +113,23 @@ class PacksonFieldTests(unittest.TestCase):
 class SimpleObject:
     a = PacksonField(type=int)
 
+
 @packson_object
 class ComplexObject:
     b = PacksonField(type=SimpleObject)
 
 
 @packson_object
-class IterObject:
+class MultiFieldComplexObject:
+    a = PacksonField(type=SimpleObject)
+    b = PacksonField(type=SimpleObject)
+    c = PacksonField(type=SimpleObject)
+
+
+@packson_object
+class ComplexIterObject:
     iterable = PacksonField(type=list, boxed_type=SimpleObject)
+
 
 @packson_object
 class SimpleIterObject:
