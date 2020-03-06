@@ -1,5 +1,7 @@
 
 ## Packson
+[![PyPI version](https://badge.fury.io/py/packson.svg)](https://badge.fury.io/py/packson)
+
 Easily bind json and dictionaries to python class instances 
 
 ### Justification 
