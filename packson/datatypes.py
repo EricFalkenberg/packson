@@ -11,7 +11,7 @@ PRIMITIVE_TYPES = [
     bytes,
     tuple,
     list,
-    set
+    set,
 ]
 
 ITERABLE_TYPES = [
@@ -57,7 +57,7 @@ def packson_object(cls):
                         new_val += [new_element]
                 val = new_val
             if not isinstance(val, attribute.type):
-                raise TypeError(f'value provided for {key} does not match field type {attribute.type}')
+                raise TypeError(f'value provided for {key} does not match field type {attribute.type} (got {type(val)})')
             attribute.set_value(val)
             self.__setattr__(key, attribute)
 
@@ -66,6 +66,8 @@ def packson_object(cls):
                 pass
             elif value.is_complex() and not value.is_none():
                 self.__json_data[key] = value.value.to_dict()
+            elif value.type.__name__ == 'PacksonData':
+                self.__json_data[key] = value.type._PacksonData__json_data
             else:
                 self.__json_data[key] = value.value
             super(PacksonData, self).__setattr__(key, value)
@@ -94,21 +96,15 @@ def packson_object(cls):
         def from_dict(cls, input_dict):
             o = cls()
             for key, val in input_dict.items():
-                o.set_packson_field(key, val)
+                if type(val).__name__ == 'PacksonData':
+                    o.set_packson_field(key, copy.deepcopy(val.to_dict()))
+                else:
+                    o.set_packson_field(key, val)
             return o
 
         @classmethod
-        def builder(cls, **kwargs):
-
-            class Builder(cls):
-
-                def __init__(self, **kwargs):
-                    super().__init__()
-                    for key, value in kwargs.items():
-                        self.set_packson_field(key, value)
-                        super().set_packson_field(key, value)
-
-            return Builder(**kwargs)
+        def create(cls, **kwargs):
+            return cls.from_dict(kwargs)
 
         def __repr__(self):
             return repr(self.__wrapper)
