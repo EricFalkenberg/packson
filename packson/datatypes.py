@@ -97,6 +97,19 @@ def packson_object(cls):
                 o.set_packson_field(key, val)
             return o
 
+        @classmethod
+        def builder(cls, **kwargs):
+
+            class Builder(cls):
+
+                def __init__(self, **kwargs):
+                    super().__init__()
+                    for key, value in kwargs.items():
+                        self.set_packson_field(key, value)
+                        super().set_packson_field(key, value)
+
+            return Builder(**kwargs)
+
         def __repr__(self):
             return repr(self.__wrapper)
 
