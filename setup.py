@@ -2,13 +2,13 @@ from distutils.core import setup
 setup(
   name = 'packson',
   packages = ['packson'],
-  version = '0.2.1',
+  version = '0.3.0',
   license='MIT',
   description = 'Easily bind JSON to user defined class instances.',
   author = 'Eric Falkenberg',
   author_email = 'ericsfalkenberg@gmail.com',
   url = 'https://github.com/EricFalkenberg/packson',
-  download_url = 'https://github.com/EricFalkenberg/packson/archive/v0.2.1.tar.gz',
+  download_url = 'https://github.com/EricFalkenberg/packson/archive/v0.3.0.tar.gz',
   keywords = ['json', 'data', 'bind', 'decorator', 'types'],
   install_requires=[],
   classifiers=[
