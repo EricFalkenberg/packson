@@ -103,6 +103,11 @@ def packson_object(cls):
             return o
 
         @classmethod
+        def from_file(cls, input_file):
+            with open(input_file) as json_file:
+                return cls.from_dict(json.load(json_file))
+
+        @classmethod
         def create(cls, **kwargs):
             return cls.from_dict(kwargs)
 
