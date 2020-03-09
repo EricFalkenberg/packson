@@ -119,6 +119,15 @@ class PacksonObjectTests(unittest.TestCase):
             }
         ))
 
+    def test_complex_iter_object_from_file(self):
+        res = ComplexIterObject.from_file('resources/test.json')
+        self.assertIsInstance(res, ComplexIterObject)
+        self.assertIsInstance(res.iterable, list)
+        for idx, element in enumerate(res.iterable):
+            self.assertIsInstance(element, SimpleObject)
+            self.assertIsInstance(element.a, int)
+            self.assertEqual(idx+1, element.a)
+
     def test_simple_object_from_json_bad_type(self):
         with self.assertRaises(TypeError):
             SimpleObject.from_json(
