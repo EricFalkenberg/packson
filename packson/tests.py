@@ -1,53 +1,31 @@
 import unittest
 import json
-from datatypes import PacksonField, packson_object
+from os import listdir
+from os.path import splitext
+from packson.datatypes import PacksonField, packson_object
+
+
+RESOURCE_FILES = {}
+for file in listdir('resources/'):
+    with open(f'resources/{file}') as f:
+        RESOURCE_FILES[splitext(file)[0]] = f.read()
 
 
 class PacksonObjectTests(unittest.TestCase):
 
     def test_simple_object_from_json(self):
-        res = SimpleObject.from_json(
-            json.dumps(
-                {
-                    'a': 3
-                }
-            )
-        )
+        res = SimpleObject.from_json(RESOURCE_FILES['simple_object'])
         self.assertIsInstance(res, SimpleObject)
         self.assertEqual(res.a, 3)
 
     def test_complex_object_from_json(self):
-        res = ComplexObject.from_json(
-            json.dumps(
-                {
-                    'b': {
-                        'a': 3
-                    }
-                }
-            )
-        )
+        res = ComplexObject.from_json(RESOURCE_FILES['complex_object'])
         self.assertIsInstance(res, ComplexObject)
         self.assertIsInstance(res.b, SimpleObject)
         self.assertEqual(res.b.a, 3)
 
     def test_iterable_object_from_json(self):
-        res = ComplexIterObject.from_json(
-            json.dumps(
-                {
-                    'iterable': [
-                        {
-                            'a': 1
-                        },
-                        {
-                            'a': 2
-                        },
-                        {
-                            'a': 3
-                        }
-                    ]
-                }
-            )
-        )
+        res = ComplexIterObject.from_json(RESOURCE_FILES['complex_iter_object'])
         self.assertIsInstance(res, ComplexIterObject)
         self.assertIsInstance(res.iterable, list)
         for idx, element in enumerate(res.iterable):
@@ -56,27 +34,11 @@ class PacksonObjectTests(unittest.TestCase):
             self.assertEqual(idx+1, element.a)
 
     def test_simple_iterable_from_dict(self):
-        obj = SimpleIterObject.from_dict(
-            {
-                'iterable': [1, 2, 3]
-            }
-        )
+        obj = SimpleIterObject.from_dict(json.loads(RESOURCE_FILES['simple_iter_object']))
         self.assertEqual('[1, 2, 3]', str(obj.iterable))
 
     def test_multiple_complex_object_from_dict(self):
-        obj = MultiFieldComplexObject.from_dict(
-            {
-                'a': {
-                    'a': 1
-                },
-                'b': {
-                    'a': 2
-                },
-                'c': {
-                    'a': 3
-                }
-            }
-        )
+        obj = MultiFieldComplexObject.from_dict(json.loads(RESOURCE_FILES['multi_field_complex_object']))
         self.assertIsInstance(obj, MultiFieldComplexObject)
         self.assertIsInstance(obj.a, SimpleObject)
         self.assertIsInstance(obj.a.a, int)
@@ -120,7 +82,7 @@ class PacksonObjectTests(unittest.TestCase):
         ))
 
     def test_complex_iter_object_from_file(self):
-        res = ComplexIterObject.from_file('resources/test.json')
+        res = ComplexIterObject.from_file('resources/from_file.json')
         self.assertIsInstance(res, ComplexIterObject)
         self.assertIsInstance(res.iterable, list)
         for idx, element in enumerate(res.iterable):
