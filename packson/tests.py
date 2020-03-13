@@ -4,7 +4,6 @@ from os import listdir
 from os.path import splitext
 from packson.datatypes import PacksonField, packson_object
 
-
 RESOURCE_FILES = {}
 for file in listdir('resources/'):
     with open(f'resources/{file}') as f:
@@ -25,20 +24,23 @@ class PacksonObjectTests(unittest.TestCase):
         self.assertEqual(res.b.a, 3)
 
     def test_iterable_object_from_json(self):
-        res = ComplexIterObject.from_json(RESOURCE_FILES['complex_iter_object'])
+        res = ComplexIterObject.from_json(
+            RESOURCE_FILES['complex_iter_object'])
         self.assertIsInstance(res, ComplexIterObject)
         self.assertIsInstance(res.iterable, list)
         for idx, element in enumerate(res.iterable):
             self.assertIsInstance(element, SimpleObject)
             self.assertIsInstance(element.a, int)
-            self.assertEqual(idx+1, element.a)
+            self.assertEqual(idx + 1, element.a)
 
     def test_simple_iterable_from_dict(self):
-        obj = SimpleIterObject.from_dict(json.loads(RESOURCE_FILES['simple_iter_object']))
+        obj = SimpleIterObject.from_dict(
+            json.loads(RESOURCE_FILES['simple_iter_object']))
         self.assertEqual('[1, 2, 3]', str(obj.iterable))
 
     def test_multiple_complex_object_from_dict(self):
-        obj = MultiFieldComplexObject.from_dict(json.loads(RESOURCE_FILES['multi_field_complex_object']))
+        obj = MultiFieldComplexObject.from_dict(
+            json.loads(RESOURCE_FILES['multi_field_complex_object']))
         self.assertIsInstance(obj, MultiFieldComplexObject)
         self.assertIsInstance(obj.a, SimpleObject)
         self.assertIsInstance(obj.a.a, int)
@@ -88,11 +90,12 @@ class PacksonObjectTests(unittest.TestCase):
         for idx, element in enumerate(res.iterable):
             self.assertIsInstance(element, SimpleObject)
             self.assertIsInstance(element.a, int)
-            self.assertEqual(idx+1, element.a)
+            self.assertEqual(idx + 1, element.a)
 
     def test_from_non_existent_file(self):
         with self.assertRaises(FileNotFoundError):
-            ComplexIterObject.from_file('resources/a_file_that_definitely_doesnt_exist.json')
+            ComplexIterObject.from_file(
+                'resources/a_file_that_definitely_doesnt_exist.json')
 
     def test_simple_object_from_json_bad_type(self):
         with self.assertRaises(TypeError):
@@ -103,6 +106,12 @@ class PacksonObjectTests(unittest.TestCase):
                     }
                 )
             )
+
+    def test_non_serializable_json(self):
+        def non_serializable(x): return x if x else 0
+        NonSerializable.create(
+            field1=non_serializable
+        ).to_json()
 
     def test_simple_object_from_json_bad_key(self):
         with self.assertRaises(AttributeError):
@@ -154,6 +163,11 @@ class ComplexIterObject:
 @packson_object
 class SimpleIterObject:
     iterable = PacksonField(type=list, boxed_type=int)
+
+
+@packson_object
+class NonSerializable:
+    field1 = PacksonField(type=type(lambda x: 0))
 
 
 if __name__ == '__main__':
