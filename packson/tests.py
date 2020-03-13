@@ -90,6 +90,10 @@ class PacksonObjectTests(unittest.TestCase):
             self.assertIsInstance(element.a, int)
             self.assertEqual(idx+1, element.a)
 
+    def test_from_non_existent_file(self):
+        with self.assertRaises(FileNotFoundError):
+            ComplexIterObject.from_file('resources/a_file_that_definitely_doesnt_exist.json')
+
     def test_simple_object_from_json_bad_type(self):
         with self.assertRaises(TypeError):
             SimpleObject.from_json(
@@ -99,6 +103,20 @@ class PacksonObjectTests(unittest.TestCase):
                     }
                 )
             )
+
+    def test_simple_object_from_json_bad_key(self):
+        with self.assertRaises(AttributeError):
+            SimpleObject.from_json(
+                json.dumps(
+                    {
+                        'b': 3
+                    }
+                )
+            )
+
+    def test_simple_object_from_dict_missing_key(self):
+        res = SimpleObject.from_dict({})
+        self.assertIs(res.a, None)
 
 
 class PacksonFieldTests(unittest.TestCase):
